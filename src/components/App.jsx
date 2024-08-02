@@ -1,61 +1,70 @@
 // src/App.jsx
+import "./App.css";
 
 import {useEffect, useState} from "react";
-import Description from "./Description/Description";
-import Feedback from "./Feedback/Feedback";
-import Options from "./Options/Options";
-import "./App.css";
 import Section from "./Section";
-import Notification from "./Notification/Notification";
+import ContactForm from "./ContactForm/ContactForm";
+import SearchBox from "./SearchBox/SearchBox";
+import ContactList from "./ContactList/ContactList";
+import contactsData from "../contacts.json";
 
+const LS = {
+    save(key, data) {
+        window.localStorage.setItem(key, JSON.stringify(data));
+    },
+    load(key) {
+        return JSON.parse(window.localStorage.getItem(key));
+    },
+};
 const App = () => {
-    const [feedback, updateFeedback] = useState(() => {
-        // Зчитуємо значення за ключем
-        const savedFeedback = window.localStorage.getItem("feedback");
-        // Якщо там щось є, повертаємо це
-        // значення як початкове значення стану
-        if (savedFeedback !== null) {
-            return JSON.parse(savedFeedback);
-        }
-
-        // У протилежному випадку повертаємо
-        // яке-небудь значення за замовчуванням
-        return {
-            good: 0,
-            neutral: 0,
-            bad: 0,
-        };
-    });
-    useEffect(() => {
-        window.localStorage.setItem("feedback", JSON.stringify(feedback));
-    }, [feedback]);
-
-    const setFeedback = feedName => {
-        // Тут використовуй сеттер, щоб оновити стан
-        console.log(feedName);
-        updateFeedback(feedback => ({
-            ...feedback,
-            [feedName]: feedback[feedName] + 1,
-        }));
+    const options = {
+        key: "contactsData",
+        data: contactsData,
     };
-    const resetFeedback = () => {
-        updateFeedback({
-            good: 0,
-            neutral: 0,
-            bad: 0,
+    const [contacts, setContacts] = useState(() => LS.load(options.key) ?? options.data);
+    const [filter, setFilter] = useState("");
+
+    const uniqueId = () => {
+        const lastId = contacts[contacts.length - 1].id.replace(/\D/g, "");
+        return Number(lastId);
+    };
+
+    const addContact = newContact => {
+        setContacts(prevContact => {
+            newContact.id = `id-${uniqueId() + 1}`;
+            return [...prevContact, newContact];
         });
     };
-    const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
-    const average = Math.round((feedback.good / totalFeedback) * 100);
+    const removeContact = contactId => {
+        console.log(contactId);
+        setContacts(prevContact => {
+            return prevContact.filter(contact => contact.id !== contactId);
+        });
+    };
+
+    useEffect(() => {
+        LS.save(options.key, contacts);
+    }, [contacts]);
+
+    // const showContacts = contacts.filter(contact => contact.name.toLowerCase().includes(filter.toLowerCase()));
+    const showContacts = contacts.filter(contact => {
+        const input = `${contact.name ?? ""} ${contact.number ?? ""}`;
+        return input.toLowerCase().includes(filter.toLowerCase());
+    });
 
     return (
         <>
-            <Section name="header">
-                <Description title="Sip Happens Café" descr="Please leave your feedback about our service by selecting one of the options below." />
+            <Section name="header-section" container={true}>
+                <h1 className="title">Phonebook</h1>
             </Section>
-            <Section name="rating">
-                <Options update={setFeedback} reset={resetFeedback} total={totalFeedback} />
-                {totalFeedback ? <Feedback good={feedback.good} neutral={feedback.neutral} bad={feedback.bad} total={totalFeedback} average={average} /> : <Notification />}
+            <Section name="form-section" container={true}>
+                <ContactForm onAdd={addContact} />
+            </Section>
+            <Section name="search-section" container={true}>
+                <SearchBox value={filter} onFilter={setFilter} />
+            </Section>
+            <Section name="contactlist-section" container={true}>
+                <ContactList data={showContacts} onDelete={removeContact} />
             </Section>
         </>
     );
