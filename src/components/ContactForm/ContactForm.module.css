@@ -16,3 +16,6 @@
 .contacts-form .btn {
     @apply bg-gray-100 w-fit p-2 border-[1px] border-black rounded-[4px] text-xl/[1] tracking-[-0.02rem] hover:bg-gray-200;
 }
+.contacts-form .error-message {
+    @apply text-sm text-red-500
+}

@@ -8,22 +8,18 @@ body {
     line-height: 1.5;
     letter-spacing: -0.02rem;
 }
-
-.section {
-}
 .container {
     @apply mx-auto px-4;
 }
 .title {
-    letter-spacing: 0.01rem;
-    @apply font-bold text-[38px];
+    @apply font-bold text-[38px] tracking-[0.01rem];
 }
 .form-section {
-    padding-top: 25px;
+    @apply pt-6
 }
 .search-section {
-    padding-top: 34px;
+    @apply pt-8
 }
 .contactlist-section {
-    padding-top: 30px;
+    @apply pt-8
 }
