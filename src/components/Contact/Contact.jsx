@@ -2,8 +2,6 @@ import css from "./Contact.module.css";
 import {FaUser, FaPhoneAlt} from "react-icons/fa";
 
 const Contact = ({id, name, phone, onDelete}) => {
-    console.log(name);
-
     return (
         <div className={css.card}>
             <div className={css.info}>
