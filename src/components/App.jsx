@@ -32,6 +32,7 @@ const App = () => {
     const addContact = newContact => {
         setContacts(prevContact => {
             newContact.id = `id-${uniqueId() + 1}`;
+            // console.log(newContact);
             return [...prevContact, newContact];
         });
     };

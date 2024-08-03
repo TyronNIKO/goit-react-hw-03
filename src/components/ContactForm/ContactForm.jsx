@@ -16,14 +16,14 @@ const ContactForm = ({onAdd}) => {
     const idName = useId();
     const idPhone = useId();
 
-    const handleSubmit = e => {
-        e.preventDefault();
+    const handleSubmit = (values, actions) => {
+        // console.log(values);
         // id: `id-${Date.now()}`,
         onAdd({
-            name: e.target.elements.contactName.value,
-            number: e.target.elements.contactPhone.value,
+            name: values.contactName,
+            number: values.contactPhone,
         });
-        e.target.reset();
+        actions.resetForm();
     };
     return (
         <div className={css["contacts-form"]}>
